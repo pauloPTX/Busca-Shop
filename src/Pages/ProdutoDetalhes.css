@@ -62,6 +62,18 @@
   line-height: 1.4;
 }
 
+.produto-oferta-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #e63946 0%, #ff6b6b 100%);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(230, 57, 70, 0.3);
+}
+
 .produto-rating {
   display: flex;
   align-items: center;

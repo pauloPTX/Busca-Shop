@@ -62,14 +62,19 @@ function ProdutoDetalhes() {
           </div>
           <div className="produto-info">
             <h1>{product.name}</h1>
+            {product.badge === 'Oferta' && product.discount && (
+              <div className="produto-oferta-badge">
+                🔥 {product.discount}% OFF - Oferta Especial!
+              </div>
+            )}
             <div className="produto-rating">
               <span className="stars">{"⭐".repeat(Math.floor(product.rating))}</span>
               <span className="rating-text">{product.rating} (234 avaliações)</span>
             </div>
             <p className="produto-descricao">{product.description}</p>
             <div className="produto-preco">
-              <span className="preco-atual">R$ {product.price.toLocaleString()}</span>
-              <span className="preco-parcelado">ou 12x de R$ {(product.price / 12).toFixed(2)}</span>
+              <span className="preco-atual">R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              <span className="preco-parcelado">ou 12x de R$ {(product.price / 12).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             </div>
             <div className="produto-estoque">
               <span className="estoque-label">Estoque:</span>

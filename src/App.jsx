@@ -19,6 +19,7 @@ import Acessorios from './Pages/Categorias/Acessorios';
 import Busca from './Pages/Busca';
 import AdminLogin from './Pages/Admin/AdminLogin';
 import Admin from './Pages/Admin/Admin';
+import ResetSenha from './Pages/ResetSenha';
 import './App.css';
 
 function StoreApp() {
@@ -31,6 +32,7 @@ function StoreApp() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/cadastro" element={<Cadastro />} />
+            <Route path="/reset-senha" element={<ResetSenha />} />
             <Route path="/conta" element={<Conta />} />
             <Route path="/suporte" element={<Suporte />} />
             <Route path="/carrinho" element={<Carrinho />} />

@@ -48,6 +48,11 @@ function Busca() {
           <div className="products-grid">
             {products.map(product => (
               <div key={product.id} className="product-card">
+                {product.badge === 'Oferta' && product.discount ? (
+                  <div className="discount-badge">{product.discount}% OFF</div>
+                ) : product.badge ? (
+                  <div className="product-badge">{product.badge}</div>
+                ) : null}
                 <Link to={`/produto/${product.id}`}>
                   <img src={product.image} alt={product.name} />
                 </Link>
@@ -60,7 +65,7 @@ function Busca() {
                     <span>({product.rating})</span>
                   </div>
                   <div className="price-section">
-                    <span className="price">R$ {product.price.toLocaleString()}</span>
+                    <span className="price">R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                   </div>
                   <button className="btn-add" onClick={() => addToCart(product)}>Adicionar ao Carrinho</button>
                 </div>

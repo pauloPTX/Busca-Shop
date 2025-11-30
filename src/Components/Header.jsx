@@ -96,8 +96,8 @@ function Header() {
         <div className="container">
           <Link to="/">Home</Link>
           <Link to="/ofertas">Ofertas do Dia</Link>
-          <Link to="/smartphones">Smartphones</Link>
-          <Link to="/computadores">Computadores</Link>
+          <Link to="/smartphones">Smartphones / Tablets</Link>
+          <Link to="/computadores">Notebooks / Computadores</Link>
           <Link to="/games">Games</Link>
           <Link to="/audio-video">Áudio & Vídeo</Link>
           <Link to="/acessorios">Acessórios</Link>

@@ -58,7 +58,11 @@ function Home() {
           <div className="products-grid">
             {products.map((product) => (
             <div key={product.id} className="product-card">
-              {product.badge && <div className="product-badge">{product.badge}</div>}
+              {product.badge === 'Oferta' && product.discount ? (
+                <div className="product-badge">{product.discount}% OFF</div>
+              ) : product.badge ? (
+                <div className="product-badge">{product.badge}</div>
+              ) : null}
               <Link to={`/produto/${product.id}`}>
                 <img src={product.image || "/placeholder.svg"} alt={product.name} />
               </Link>
@@ -71,7 +75,7 @@ function Home() {
                   <span className="rating-value">({product.reviews})</span>
                 </div>
                 <div className="product-footer">
-                  <span className="price">R$ {product.price.toLocaleString()}</span>
+                  <span className="price">R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                   <button className="btn-add" onClick={() => addToCart(product)}>
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                       <path

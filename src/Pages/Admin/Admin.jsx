@@ -21,7 +21,8 @@ function Admin() {
     rating: 4.5,
     reviews: 0,
     badge: '',
-    stock: 0
+    stock: 0,
+    discount: ''
   });
   const [imagePreview, setImagePreview] = useState('');
 
@@ -118,19 +119,19 @@ function Admin() {
       
       if (showModal) closeModal();
       
-      if (activeSection === 'add-product') {
-        setFormData({
-          name: '',
-          price: '',
-          category: 'Eletrônicos',
-          description: '',
-          image: '',
-          rating: 4.5,
-          reviews: 0,
-          badge: ''
-        });
-        setImagePreview('');
-      }
+      setFormData({
+        name: '',
+        price: '',
+        category: 'Eletrônicos',
+        description: '',
+        image: '',
+        rating: 4.5,
+        reviews: 0,
+        badge: '',
+        stock: 0,
+        discount: ''
+      });
+      setImagePreview('');
     } catch (error) {
       console.error('Erro ao salvar produto:', error);
       alert('Erro ao salvar produto: ' + error.message);
@@ -162,7 +163,9 @@ function Admin() {
         image: '',
         rating: 4.5,
         reviews: 0,
-        badge: ''
+        badge: '',
+        stock: 0,
+        discount: ''
       });
     }
     setShowModal(true);
@@ -248,8 +251,8 @@ function Admin() {
                   <label>Categoria</label>
                   <select value={formData.category} onChange={(e) => setFormData({...formData, category: e.target.value})}>
                     <option value="Eletrônicos">Eletrônicos</option>
-                    <option value="Smartphones">Smartphones</option>
-                    <option value="Notebooks">Notebooks</option>
+                    <option value="Smartphones">Smartphones / Tablets</option>
+                    <option value="Notebooks">Notebooks / Computadores</option>
                     <option value="Games">Games</option>
                     <option value="Áudio">Áudio</option>
                     <option value="Câmeras">Câmeras</option>
@@ -264,6 +267,16 @@ function Admin() {
                     <option value="Oferta">Oferta</option>
                   </select>
                 </div>
+              </div>
+              {formData.badge === 'Oferta' && (
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Desconto (%)</label>
+                    <input type="number" min="1" max="99" value={formData.discount || ''} onChange={(e) => setFormData({...formData, discount: e.target.value})} placeholder="Ex: 8" />
+                  </div>
+                </div>
+              )}
+              <div className="form-row" style={{display: 'none'}}>
               </div>
               <div className="form-row">
                 <div className="form-group">
@@ -445,8 +458,8 @@ function Admin() {
                 <label>Categoria</label>
                 <select value={formData.category} onChange={(e) => setFormData({...formData, category: e.target.value})}>
                   <option value="Eletrônicos">Eletrônicos</option>
-                  <option value="Smartphones">Smartphones</option>
-                  <option value="Notebooks">Notebooks</option>
+                  <option value="Smartphones">Smartphones / Tablets</option>
+                  <option value="Notebooks">Notebooks / Computadores</option>
                   <option value="Games">Games</option>
                   <option value="Áudio">Áudio</option>
                   <option value="Câmeras">Câmeras</option>
@@ -487,6 +500,12 @@ function Admin() {
                   <option value="Oferta">Oferta</option>
                 </select>
               </div>
+              {formData.badge === 'Oferta' && (
+                <div className="form-group">
+                  <label>Desconto (%)</label>
+                  <input type="number" min="1" max="99" value={formData.discount || ''} onChange={(e) => setFormData({...formData, discount: e.target.value})} placeholder="Ex: 8" />
+                </div>
+              )}
               <div className="form-actions">
                 <button type="submit" className="btn-save">Salvar</button>
                 <button type="button" className="btn-cancel" onClick={closeModal}>Cancelar</button>

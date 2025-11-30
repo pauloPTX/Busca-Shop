@@ -17,6 +17,8 @@ public class UserService {
     private OrderRepository orderRepository;
     @Autowired
     private AddressRepository addressRepository;
+    @Autowired
+    private EmailService emailService;
     
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -26,7 +28,9 @@ public class UserService {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new RuntimeException("Email já cadastrado");
         }
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        emailService.sendWelcomeEmail(user.getEmail(), user.getName());
+        return savedUser;
     }
     
     public User login(String email, String password) {

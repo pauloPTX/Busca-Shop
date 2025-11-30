@@ -16,12 +16,22 @@ function Computadores() {
     <div className="categoria-page">
       <div className="container">
         <div className="page-header">
-          <h1>💻 Computadores</h1>
+          <h1>💻 Notebooks / Computadores</h1>
           <p>Notebooks e PCs de alta performance</p>
         </div>
-        <div className="products-grid">
-          {products.map(product => (
+        {products.length === 0 ? (
+          <div style={{textAlign: 'center', padding: '60px 20px', color: '#666'}}>
+            <p style={{fontSize: '18px'}}>Nenhum produto encontrado nessa categoria</p>
+          </div>
+        ) : (
+          <div className="products-grid">
+            {products.map(product => (
             <div key={product.id} className="product-card">
+              {product.badge === 'Oferta' && product.discount ? (
+                <div className="discount-badge">{product.discount}% OFF</div>
+              ) : product.badge ? (
+                <div className="product-badge">{product.badge}</div>
+              ) : null}
               <img src={product.image} alt={product.name} />
               <div className="product-info">
                 <Link to={`/produto/${product.id}`}><h4>{product.name}</h4></Link>
@@ -30,13 +40,14 @@ function Computadores() {
                   <span>({product.rating})</span>
                 </div>
                 <div className="price-section">
-                  <span className="price">R$ {product.price.toLocaleString()}</span>
+                  <span className="price">R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                 </div>
                 <button className="btn-add" onClick={() => addToCart(product)}>Adicionar ao Carrinho</button>
               </div>
             </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

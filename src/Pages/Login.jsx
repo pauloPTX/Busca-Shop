@@ -55,6 +55,9 @@ function Login() {
             <button type="submit" className="btn-auth">Entrar</button>
           </form>
           <p className="auth-link">
+            <Link to="/reset-senha">Esqueceu a senha?</Link>
+          </p>
+          <p className="auth-link">
             Não tem uma conta? <Link to="/cadastro">Cadastre-se</Link>
           </p>
         </div>

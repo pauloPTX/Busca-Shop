@@ -292,6 +292,7 @@ function Conta() {
                   <p>{userData.email}</p>
                 </div>
                 <button className="btn-primary" onClick={handleEditProfile}>Editar Perfil</button>
+                <button className="btn-secondary" onClick={() => window.location.href = '/reset-senha'} style={{marginTop: '10px'}}>🔒 Trocar Senha</button>
                 <button className="btn-delete-account" onClick={() => setShowDeleteModal(true)}>⚠️ Deletar Conta</button>
               </div>
             ) : (

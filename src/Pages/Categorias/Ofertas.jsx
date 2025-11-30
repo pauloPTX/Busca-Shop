@@ -19,10 +19,19 @@ function Ofertas() {
           <h1>🔥 Ofertas do Dia</h1>
           <p>Aproveite descontos imperdíveis em produtos selecionados</p>
         </div>
-        <div className="products-grid">
-          {products.map(product => (
+        {products.length === 0 ? (
+          <div style={{textAlign: 'center', padding: '60px 20px', color: '#666'}}>
+            <p style={{fontSize: '18px'}}>Nenhum produto encontrado nessa categoria</p>
+          </div>
+        ) : (
+          <div className="products-grid">
+            {products.map(product => (
             <div key={product.id} className="product-card">
-              <div className="discount-badge">{product.discount}% OFF</div>
+              {product.badge === 'Oferta' && product.discount ? (
+                <div className="discount-badge">{product.discount}% OFF</div>
+              ) : product.badge ? (
+                <div className="product-badge">{product.badge}</div>
+              ) : null}
               <Link to={`/produto/${product.id}`}>
                 <img src={product.image} alt={product.name} />
               </Link>
@@ -34,14 +43,15 @@ function Ofertas() {
                   <span className="stars">{"⭐".repeat(Math.floor(product.rating))}</span>
                 </div>
                 <div className="price-section">
-                  <span className="old-price">R$ {product.oldPrice.toLocaleString()}</span>
-                  <span className="price">R$ {product.price.toLocaleString()}</span>
+                  {product.oldPrice && <span className="old-price">R$ {product.oldPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>}
+                  <span className="price">R$ {product.price?.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0,00'}</span>
                 </div>
                 <button className="btn-add" onClick={() => addToCart(product)}>Adicionar ao Carrinho</button>
               </div>
             </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

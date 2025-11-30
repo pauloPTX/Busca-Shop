@@ -30,6 +30,8 @@ public class Product {
     private String badge;
     
     private Integer stock;
+    
+    private Integer discount;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -51,4 +53,6 @@ public class Product {
     public void setBadge(String badge) { this.badge = badge; }
     public Integer getStock() { return stock; }
     public void setStock(Integer stock) { this.stock = stock; }
+    public Integer getDiscount() { return discount; }
+    public void setDiscount(Integer discount) { this.discount = discount; }
 }
