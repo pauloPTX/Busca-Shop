@@ -92,10 +92,32 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
   padding: 20px;
   background: #fafafa;
   border-radius: 8px;
+}
+
+.produto-estoque {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  padding: 12px 20px;
+  background: #f0f9ff;
+  border-radius: 8px;
+  border: 1px solid #bae6fd;
+}
+
+.estoque-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0369a1;
+}
+
+.estoque-valor {
+  font-size: 14px;
+  color: #0c4a6e;
 }
 
 .preco-atual {
@@ -172,6 +194,18 @@
 
 .btn-add-cart.added {
   background: #28a745;
+}
+
+.btn-add-cart:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.btn-add-cart:disabled:hover {
+  background: #ccc;
+  transform: none;
+  box-shadow: none;
 }
 
 .produto-beneficios {

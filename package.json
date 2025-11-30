@@ -4,11 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "echo. && echo ========================================== && echo    BUSCA SHOP - URLs && echo ========================================== && echo. && echo 🛍️  LOJA: http://localhost:5173 && echo 🔧  ADMIN: http://localhost:5173/admin && echo. && echo Credenciais Admin: && echo Email: busca@shop.com && echo Senha: admin123 && echo. && echo ========================================== && echo. && vite",
+    "dev": "concurrently \"npm run frontend\" \"npm run backend\"",
+    "frontend": "echo. && echo ========================================== && echo    BUSCA SHOP - URLs && echo ========================================== && echo. && echo 🛍️  LOJA: http://localhost:5173 && echo 🔧  ADMIN: http://localhost:5173/admin && echo 📡  BACKEND: http://localhost:8080 && echo. && echo Credenciais Admin: && echo Email: busca@shop.com && echo Senha: admin123 && echo. && echo ========================================== && echo. && vite",
+    "backend": "cd backend && mvn spring-boot:run",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "admin": "echo \n🔐 PAINEL ADMIN: http://localhost:5173/admin\n🛒 LOJA: http://localhost:5173\n && npm run dev"
+    "preview": "vite preview"
   },
   "dependencies": {
     "react": "^19.2.0",
@@ -20,6 +21,7 @@
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
+    "concurrently": "^9.2.1",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",

@@ -71,14 +71,22 @@ function ProdutoDetalhes() {
               <span className="preco-atual">R$ {product.price.toLocaleString()}</span>
               <span className="preco-parcelado">ou 12x de R$ {(product.price / 12).toFixed(2)}</span>
             </div>
+            <div className="produto-estoque">
+              <span className="estoque-label">Estoque:</span>
+              <span className="estoque-valor">{product.stock || 0} unidades disponíveis</span>
+            </div>
             <div className="produto-acoes">
               <div className="quantidade-selector">
                 <button onClick={() => setQuantity(Math.max(1, quantity - 1))}>-</button>
                 <span>{quantity}</span>
-                <button onClick={() => setQuantity(quantity + 1)}>+</button>
+                <button onClick={() => setQuantity(Math.min(product.stock || 999, quantity + 1))}>+</button>
               </div>
-              <button className={`btn-add-cart ${added ? 'added' : ''}`} onClick={handleAddToCart}>
-                {added ? '✓ Adicionado!' : 'Adicionar ao Carrinho'}
+              <button 
+                className={`btn-add-cart ${added ? 'added' : ''}`} 
+                onClick={handleAddToCart}
+                disabled={!product.stock || product.stock === 0}
+              >
+                {!product.stock || product.stock === 0 ? 'Sem Estoque' : added ? '✓ Adicionado!' : 'Adicionar ao Carrinho'}
               </button>
             </div>
             <div className="produto-beneficios">

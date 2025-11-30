@@ -20,7 +20,8 @@ function Admin() {
     image: '',
     rating: 4.5,
     reviews: 0,
-    badge: ''
+    badge: '',
+    stock: 0
   });
   const [imagePreview, setImagePreview] = useState('');
 
@@ -99,7 +100,8 @@ function Admin() {
         ...formData,
         price: parseFloat(formData.price),
         rating: parseFloat(formData.rating || 4.5),
-        reviews: parseInt(formData.reviews || 0)
+        reviews: parseInt(formData.reviews || 0),
+        stock: parseInt(formData.stock || 0)
       };
       
       console.log('Enviando produto:', productData);
@@ -263,6 +265,12 @@ function Admin() {
                   </select>
                 </div>
               </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Quantidade em Estoque</label>
+                  <input type="number" value={formData.stock} onChange={(e) => setFormData({...formData, stock: e.target.value})} required />
+                </div>
+              </div>
               <div className="form-group">
                 <label>Descrição</label>
                 <textarea value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} rows="3"></textarea>
@@ -309,6 +317,7 @@ function Admin() {
               <th>Nome</th>
               <th>Preço</th>
               <th>Categoria</th>
+              <th>Estoque</th>
               <th>Badge</th>
               <th>Ações</th>
             </tr>
@@ -321,6 +330,7 @@ function Admin() {
                 <td>{product.name}</td>
                 <td>R$ {product.price?.toLocaleString()}</td>
                 <td>{product.category}</td>
+                <td>{product.stock || 0}</td>
                 <td>{product.badge || '-'}</td>
                 <td>
                   <button className="btn-edit" onClick={() => openModal(product)}>Editar</button>
@@ -441,6 +451,10 @@ function Admin() {
                   <option value="Áudio">Áudio</option>
                   <option value="Câmeras">Câmeras</option>
                 </select>
+              </div>
+              <div className="form-group">
+                <label>Quantidade em Estoque</label>
+                <input type="number" value={formData.stock} onChange={(e) => setFormData({...formData, stock: e.target.value})} required />
               </div>
               <div className="form-group">
                 <label>Descrição</label>

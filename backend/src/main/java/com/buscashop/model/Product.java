@@ -28,6 +28,8 @@ public class Product {
     private Integer reviews;
     
     private String badge;
+    
+    private Integer stock;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -47,4 +49,6 @@ public class Product {
     public void setReviews(Integer reviews) { this.reviews = reviews; }
     public String getBadge() { return badge; }
     public void setBadge(String badge) { this.badge = badge; }
+    public Integer getStock() { return stock; }
+    public void setStock(Integer stock) { this.stock = stock; }
 }
