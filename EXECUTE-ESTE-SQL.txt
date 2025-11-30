@@ -1,0 +1,12 @@
+🚨 EXECUTE ESTE SQL NO SUPABASE AGORA! 🚨
+
+1. Acesse: https://supabase.com/dashboard
+2. Selecione seu projeto
+3. Vá em "SQL Editor" (no menu lateral)
+4. Cole e execute este comando:
+
+ALTER TABLE products ALTER COLUMN image TYPE TEXT;
+
+5. Depois reinicie o backend (Ctrl+C e mvn spring-boot:run)
+
+SEM ISSO O CADASTRO NÃO VAI FUNCIONAR!
