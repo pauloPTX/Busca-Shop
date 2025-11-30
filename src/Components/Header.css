@@ -96,9 +96,16 @@
 }
 
 .btn-login {
-  color: #1a1a1a;
-  background: transparent;
-  border: 2px solid #e5e5e5;
+  width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s;
 }
 
 .btn-login:hover {
@@ -106,9 +113,16 @@
 }
 
 .btn-register {
-  color: white;
-  background: linear-gradient(135deg, #e63946 0%, #ff6b6b 100%);
-  box-shadow: 0 4px 12px rgba(230, 57, 70, 0.3);
+  width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #e63946 0%, #ff6b6b 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s;
 }
 
 .btn-register:hover {
