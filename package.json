@@ -4,7 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "concurrently \"cd backend && mvn spring-boot:run\" \"vite\"",
+    "frontend": "vite",
+    "backend": "cd backend && mvn spring-boot:run",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"

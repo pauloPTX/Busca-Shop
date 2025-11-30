@@ -15,25 +15,16 @@ public class AddressController {
     
     @GetMapping("/user/{userId}")
     public List<Address> getAddressesByUser(@PathVariable Long userId) {
-        System.out.println("[ADDRESS] Buscando endereços do usuário: " + userId);
-        List<Address> addresses = addressRepository.findByUserId(userId);
-        System.out.println("[ADDRESS] Encontrados " + addresses.size() + " endereços");
-        return addresses;
+        return addressRepository.findByUserId(userId);
     }
     
     @PostMapping
     public Address createAddress(@RequestBody Address address) {
-        System.out.println("[ADDRESS] Criando endereço para usuário: " + address.getUserId());
-        System.out.println("[ADDRESS] Dados: " + address.getLabel() + ", " + address.getStreet());
-        Address saved = addressRepository.save(address);
-        System.out.println("[ADDRESS] Endereço salvo com ID: " + saved.getId());
-        return saved;
+        return addressRepository.save(address);
     }
     
     @DeleteMapping("/{id}")
     public void deleteAddress(@PathVariable Long id) {
-        System.out.println("[ADDRESS] Deletando endereço ID: " + id);
         addressRepository.deleteById(id);
-        System.out.println("[ADDRESS] Endereço deletado com sucesso");
     }
 }

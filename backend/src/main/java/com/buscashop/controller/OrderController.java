@@ -15,24 +15,16 @@ public class OrderController {
     
     @GetMapping("/user/{userId}")
     public List<Order> getOrdersByUser(@PathVariable Long userId) {
-        System.out.println("[ORDER] Buscando pedidos do usuário: " + userId);
-        List<Order> orders = orderRepository.findByUserIdOrderByCreatedAtDesc(userId);
-        System.out.println("[ORDER] Encontrados " + orders.size() + " pedidos");
-        return orders;
+        return orderRepository.findByUserIdOrderByCreatedAtDesc(userId);
     }
     
     @PostMapping
     public Order createOrder(@RequestBody Order order) {
-        System.out.println("[ORDER] Criando pedido para usuário: " + order.getUserId());
-        Order saved = orderRepository.save(order);
-        System.out.println("[ORDER] Pedido salvo com ID: " + saved.getId());
-        return saved;
+        return orderRepository.save(order);
     }
     
     @DeleteMapping("/{id}")
     public void deleteOrder(@PathVariable Long id) {
-        System.out.println("[ORDER] Deletando pedido ID: " + id);
         orderRepository.deleteById(id);
-        System.out.println("[ORDER] Pedido deletado com sucesso");
     }
 }

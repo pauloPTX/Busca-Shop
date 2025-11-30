@@ -5,26 +5,21 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 @SpringBootApplication
 @ComponentScan(basePackages = "com.buscashop")
 public class BuscaShopApplication {
     
-    @Autowired
-    private RequestMappingHandlerMapping requestMappingHandlerMapping;
+    @Value("${server.port}")
+    private String serverPort;
     
     public static void main(String[] args) {
         SpringApplication.run(BuscaShopApplication.class, args);
     }
     
     @EventListener(ApplicationReadyEvent.class)
-    public void logMappings() {
-        System.out.println("\n========== ROTAS REGISTRADAS ==========");
-        requestMappingHandlerMapping.getHandlerMethods().forEach((key, value) -> {
-            System.out.println(key);
-        });
-        System.out.println("========================================\n");
+    public void onReady() {
+        System.out.println("\nBackend rodando na porta: " + serverPort + "\n");
     }
 }
