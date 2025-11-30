@@ -11,9 +11,8 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(nullable = false)
+    private Long userId;
     
     @Column(nullable = false)
     private Double total;
@@ -21,24 +20,23 @@ public class Order {
     @Column(nullable = false)
     private String status;
     
-    @Column(name = "created_at")
+    @Column(nullable = false)
     private LocalDateTime createdAt;
     
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items;
     
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        if (status == null) {
-            status = "PENDING";
+    public void setItems(List<OrderItem> items) {
+        this.items = items;
+        if (items != null) {
+            items.forEach(item -> item.setOrder(this));
         }
     }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+    public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
     public Double getTotal() { return total; }
     public void setTotal(Double total) { this.total = total; }
     public String getStatus() { return status; }
@@ -46,5 +44,4 @@ public class Order {
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
     public List<OrderItem> getItems() { return items; }
-    public void setItems(List<OrderItem> items) { this.items = items; }
 }

@@ -20,7 +20,7 @@ public class OrderService {
     }
     
     public List<Order> getOrdersByUserId(Long userId) {
-        return orderRepository.findByUserId(userId);
+        return orderRepository.findByUserIdOrderByCreatedAtDesc(userId);
     }
     
     public Order updateOrderStatus(Long id, String status) {

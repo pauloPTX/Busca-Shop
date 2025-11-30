@@ -1,11 +1,50 @@
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import './Carrinho.css';
 
 function Carrinho() {
   const { cart, removeFromCart, updateQuantity, cartTotal, clearCart } = useCart();
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
+  const handleFinalizarCompra = async () => {
+    setLoading(true);
+    try {
+      const orderData = {
+        userId: user.id,
+        total: cartTotal >= 199 ? cartTotal : cartTotal + 15,
+        status: 'pending',
+        createdAt: new Date().toISOString(),
+        items: cart.map(item => ({
+          productId: item.id,
+          productName: item.name,
+          price: item.price,
+          quantity: item.quantity
+        }))
+      };
+
+      const response = await fetch('http://localhost:8080/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderData)
+      });
+
+      if (response.ok) {
+        clearCart();
+        navigate('/conta');
+      } else {
+        alert('Erro ao finalizar pedido. Tente novamente.');
+      }
+    } catch (error) {
+      console.error('Erro ao finalizar compra:', error);
+      alert('Erro ao finalizar pedido. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (!user) {
     return (
@@ -74,7 +113,9 @@ function Carrinho() {
               <span>Total</span>
               <span>R$ {(cartTotal >= 199 ? cartTotal : cartTotal + 15).toLocaleString()}</span>
             </div>
-            <button className="btn-checkout">Finalizar Compra</button>
+            <button className="btn-checkout" onClick={handleFinalizarCompra} disabled={loading}>
+              {loading ? 'Processando...' : 'Finalizar Compra'}
+            </button>
             <Link to="/" className="btn-continue">Continuar Comprando</Link>
           </div>
         </div>

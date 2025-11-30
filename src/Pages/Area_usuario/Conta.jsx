@@ -1,40 +1,66 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import './Conta.css';
+import { api } from '../../services/api';
 
 function Conta() {
   const { user } = useAuth();
   const [activeSection, setActiveSection] = useState('dashboard');
   const [userData, setUserData] = useState({
     name: '',
-    email: '',
-    phone: '',
-    cpf: ''
+    email: ''
   });
 
   useEffect(() => {
     if (user) {
       setUserData({
         name: user.name || '',
-        email: user.email || '',
-        phone: user.phone || '',
-        cpf: user.cpf || ''
+        email: user.email || ''
       });
+      loadOrders();
+      loadAddresses();
     }
   }, [user]);
-  const [addresses, setAddresses] = useState([
-    { id: 1, label: 'Casa', street: 'Rua das Flores, 123', city: 'São Paulo - SP', cep: '01234-567' },
-    { id: 2, label: 'Trabalho', street: 'Av. Paulista, 1000', city: 'São Paulo - SP', cep: '01310-100' }
-  ]);
-  const [orders] = useState([
-    { id: '#12345', date: '15/12/2024', status: 'delivered', total: 899, items: 'iPhone 15 Pro Max' },
-    { id: '#12344', date: '10/12/2024', status: 'shipped', total: 1299, items: 'MacBook Air M2' },
-    { id: '#12343', date: '05/12/2024', status: 'processing', total: 649, items: 'Fone Sony WH-1000XM5' }
-  ]);
+
+  const loadOrders = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/orders/user/${user.id}`);
+      if (response.ok) {
+        const data = await response.json();
+        setOrders(data);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar pedidos:', error);
+    }
+  };
+
+  const loadAddresses = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/addresses/user/${user.id}`);
+      if (response.ok) {
+        const data = await response.json();
+        setAddresses(data);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar endereços:', error);
+    }
+  };
+  const [addresses, setAddresses] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [showAddressForm, setShowAddressForm] = useState(false);
+  const [addressForm, setAddressForm] = useState({
+    label: '',
+    street: '',
+    city: '',
+    state: '',
+    cep: ''
+  });
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState(userData);
   const [profilePhoto, setProfilePhoto] = useState(null);
   const [showPhotoMenu, setShowPhotoMenu] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deletePassword, setDeletePassword] = useState('');
 
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
@@ -57,13 +83,93 @@ function Conta() {
     setEditForm(userData);
   };
 
-  const handleSaveProfile = () => {
-    setUserData(editForm);
-    setIsEditing(false);
+  const handleSaveProfile = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/users/${user.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editForm)
+      });
+      if (response.ok) {
+        setUserData(editForm);
+        const updatedUser = { ...user, ...editForm };
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        setIsEditing(false);
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar perfil:', error);
+    }
   };
 
-  const handleDeleteAddress = (id) => {
-    setAddresses(addresses.filter(addr => addr.id !== id));
+  const handleCancelOrder = async (orderId) => {
+    if (!confirm('Deseja realmente cancelar este pedido?')) return;
+    try {
+      const response = await fetch(`http://localhost:8080/api/orders/${orderId}`, {
+        method: 'DELETE'
+      });
+      if (response.ok) {
+        loadOrders();
+      }
+    } catch (error) {
+      console.error('Erro ao cancelar pedido:', error);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!deletePassword) {
+      alert('Digite sua senha para confirmar');
+      return;
+    }
+    try {
+      const loginResponse = await fetch('http://localhost:8080/api/users/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: user.email, password: deletePassword })
+      });
+      
+      if (!loginResponse.ok) {
+        alert('Senha incorreta!');
+        setDeletePassword('');
+        return;
+      }
+      
+      const deleteResponse = await fetch(`http://localhost:8080/api/users/${user.id}`, {
+        method: 'DELETE'
+      });
+      
+      if (deleteResponse.ok) {
+        localStorage.removeItem('user');
+        window.location.href = '/';
+      }
+    } catch (error) {
+      console.error('Erro ao deletar conta:', error);
+      alert('Erro ao deletar conta. Tente novamente.');
+    }
+  };
+
+  const handleDeleteAddress = async (id) => {
+    try {
+      await fetch(`http://localhost:8080/api/addresses/${id}`, { method: 'DELETE' });
+      loadAddresses();
+    } catch (error) {
+      console.error('Erro ao deletar endereço:', error);
+    }
+  };
+
+  const handleSaveAddress = async (e) => {
+    e.preventDefault();
+    try {
+      await fetch('http://localhost:8080/api/addresses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...addressForm, userId: user.id })
+      });
+      setShowAddressForm(false);
+      setAddressForm({ label: '', street: '', city: '', state: '', cep: '' });
+      loadAddresses();
+    } catch (error) {
+      console.error('Erro ao salvar endereço:', error);
+    }
   };
 
   const getStatusClass = (status) => {
@@ -79,9 +185,14 @@ function Conta() {
     const textMap = {
       delivered: 'Entregue',
       shipped: 'Enviado',
-      processing: 'Processando'
+      processing: 'Processando',
+      pending: 'Pendente'
     };
-    return textMap[status];
+    return textMap[status] || status;
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('pt-BR');
   };
 
   const renderContent = () => {
@@ -121,10 +232,10 @@ function Conta() {
                 <tbody>
                   {orders.map(order => (
                     <tr key={order.id}>
-                      <td>{order.id}</td>
-                      <td>{order.date}</td>
+                      <td>#{order.id}</td>
+                      <td>{formatDate(order.createdAt)}</td>
                       <td><span className={`order-status ${getStatusClass(order.status)}`}>{getStatusText(order.status)}</span></td>
-                      <td>R$ {order.total.toLocaleString()},00</td>
+                      <td>R$ {order.total.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -145,15 +256,18 @@ function Conta() {
                 <div key={order.id} className="order-card">
                   <div className="order-header">
                     <div>
-                      <strong>Pedido {order.id}</strong>
-                      <p>{order.date}</p>
+                      <strong>Pedido #{order.id}</strong>
+                      <p>{formatDate(order.createdAt)}</p>
                     </div>
                     <span className={`order-status ${getStatusClass(order.status)}`}>{getStatusText(order.status)}</span>
                   </div>
                   <div className="order-body">
-                    <p>{order.items}</p>
-                    <strong>R$ {order.total.toLocaleString()},00</strong>
+                    <p>{order.items?.length || 0} item(s)</p>
+                    <strong>R$ {order.total.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong>
                   </div>
+                  {order.status === 'pending' && (
+                    <button className="btn-delete" onClick={() => handleCancelOrder(order.id)}>Cancelar Pedido</button>
+                  )}
                 </div>
               ))}
             </div>
@@ -177,15 +291,8 @@ function Conta() {
                   <label>Email</label>
                   <p>{userData.email}</p>
                 </div>
-                <div className="info-row">
-                  <label>Telefone</label>
-                  <p>{userData.phone}</p>
-                </div>
-                <div className="info-row">
-                  <label>CPF</label>
-                  <p>{userData.cpf}</p>
-                </div>
                 <button className="btn-primary" onClick={handleEditProfile}>Editar Perfil</button>
+                <button className="btn-delete-account" onClick={() => setShowDeleteModal(true)}>⚠️ Deletar Conta</button>
               </div>
             ) : (
               <div className="profile-form">
@@ -196,14 +303,6 @@ function Conta() {
                 <div className="form-group">
                   <label>Email</label>
                   <input type="email" value={editForm.email} onChange={(e) => setEditForm({...editForm, email: e.target.value})} />
-                </div>
-                <div className="form-group">
-                  <label>Telefone</label>
-                  <input type="text" value={editForm.phone} onChange={(e) => setEditForm({...editForm, phone: e.target.value})} />
-                </div>
-                <div className="form-group">
-                  <label>CPF</label>
-                  <input type="text" value={editForm.cpf} onChange={(e) => setEditForm({...editForm, cpf: e.target.value})} />
                 </div>
                 <div className="form-actions">
                   <button className="btn-primary" onClick={handleSaveProfile}>Salvar</button>
@@ -226,14 +325,30 @@ function Conta() {
                 <div key={addr.id} className="address-card">
                   <div className="address-label">{addr.label}</div>
                   <p>{addr.street}</p>
-                  <p>{addr.city}</p>
+                  <p>{addr.city} - {addr.state}</p>
                   <p>CEP: {addr.cep}</p>
                   <button className="btn-delete" onClick={() => handleDeleteAddress(addr.id)}>Remover</button>
                 </div>
               ))}
-              <div className="address-card add-new">
+              <div className="address-card add-new" onClick={() => setShowAddressForm(true)}>
                 <span>+ Adicionar Novo Endereço</span>
               </div>
+              {showAddressForm && (
+                <div className="address-form">
+                  <h3>Novo Endereço</h3>
+                  <form onSubmit={handleSaveAddress}>
+                    <input type="text" placeholder="Label (Casa, Trabalho...)" value={addressForm.label} onChange={(e) => setAddressForm({...addressForm, label: e.target.value})} required />
+                    <input type="text" placeholder="Rua e Número" value={addressForm.street} onChange={(e) => setAddressForm({...addressForm, street: e.target.value})} required />
+                    <input type="text" placeholder="Cidade" value={addressForm.city} onChange={(e) => setAddressForm({...addressForm, city: e.target.value})} required />
+                    <input type="text" placeholder="Estado (SP, RJ...)" maxLength="2" value={addressForm.state} onChange={(e) => setAddressForm({...addressForm, state: e.target.value.toUpperCase()})} required />
+                    <input type="text" placeholder="CEP" value={addressForm.cep} onChange={(e) => setAddressForm({...addressForm, cep: e.target.value})} required />
+                    <div className="form-actions">
+                      <button type="submit" className="btn-primary">Salvar</button>
+                      <button type="button" className="btn-secondary" onClick={() => setShowAddressForm(false)}>Cancelar</button>
+                    </div>
+                  </form>
+                </div>
+              )}
             </div>
           </>
         );
@@ -315,6 +430,31 @@ function Conta() {
           </main>
         </div>
       </div>
+      {showDeleteModal && (
+        <div className="modal-overlay" onClick={() => setShowDeleteModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2>⚠️ Deletar Conta</h2>
+            <p>Esta ação é <strong>irreversível</strong> e irá deletar:</p>
+            <ul style={{textAlign: 'left', margin: '20px 0'}}>
+              <li>Sua conta e dados pessoais</li>
+              <li>Todos os seus pedidos</li>
+              <li>Todos os seus endereços</li>
+            </ul>
+            <p>Digite sua <strong>senha</strong> para confirmar:</p>
+            <input 
+              type="password" 
+              value={deletePassword} 
+              onChange={(e) => setDeletePassword(e.target.value)}
+              placeholder="Digite sua senha"
+              style={{width: '100%', padding: '10px', marginBottom: '20px'}}
+            />
+            <div className="form-actions">
+              <button className="btn-delete" onClick={handleDeleteAccount}>Confirmar Exclusão</button>
+              <button className="btn-secondary" onClick={() => { setShowDeleteModal(false); setDeletePassword(''); }}>Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

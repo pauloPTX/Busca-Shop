@@ -2,14 +2,21 @@ package com.buscashop.service;
 
 import com.buscashop.model.User;
 import com.buscashop.repository.UserRepository;
+import com.buscashop.repository.OrderRepository;
+import com.buscashop.repository.AddressRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private OrderRepository orderRepository;
+    @Autowired
+    private AddressRepository addressRepository;
     
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -37,11 +44,28 @@ public class UserService {
         return userRepository.findById(id).orElse(null);
     }
     
-    public User updateUser(Long id, User user) {
-        if (userRepository.existsById(id)) {
-            user.setId(id);
-            return userRepository.save(user);
+    public User updateUser(Long id, User userData) {
+        User existingUser = userRepository.findById(id).orElse(null);
+        if (existingUser != null) {
+            if (userData.getName() != null) {
+                existingUser.setName(userData.getName());
+            }
+            if (userData.getEmail() != null) {
+                existingUser.setEmail(userData.getEmail());
+            }
+            // Só atualiza senha se for enviada
+            if (userData.getPassword() != null && !userData.getPassword().isEmpty()) {
+                existingUser.setPassword(userData.getPassword());
+            }
+            return userRepository.save(existingUser);
         }
         return null;
+    }
+    
+    @Transactional
+    public void deleteUser(Long id) {
+        orderRepository.deleteByUserId(id);
+        addressRepository.deleteByUserId(id);
+        userRepository.deleteById(id);
     }
 }

@@ -4,9 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"npm run frontend\" \"npm run backend\"",
-    "frontend": "echo. && echo ========================================== && echo    BUSCA SHOP - URLs && echo ========================================== && echo. && echo 🛍️  LOJA: http://localhost:5173 && echo 🔧  ADMIN: http://localhost:5173/admin && echo 📡  BACKEND: http://localhost:8080 && echo. && echo Credenciais Admin: && echo Email: busca@shop.com && echo Senha: admin123 && echo. && echo ========================================== && echo. && vite",
-    "backend": "cd backend && mvn spring-boot:run",
+    "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"

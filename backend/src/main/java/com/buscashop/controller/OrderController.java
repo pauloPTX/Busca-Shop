@@ -1,38 +1,38 @@
 package com.buscashop.controller;
 
 import com.buscashop.model.Order;
-import com.buscashop.service.OrderService;
+import com.buscashop.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
+    
     @Autowired
-    private OrderService orderService;
-    
-    @PostMapping
-    public ResponseEntity<Order> createOrder(@RequestBody Order order) {
-        return ResponseEntity.ok(orderService.createOrder(order));
-    }
-    
-    @GetMapping("/{id}")
-    public ResponseEntity<Order> getOrderById(@PathVariable Long id) {
-        Order order = orderService.getOrderById(id);
-        return order != null ? ResponseEntity.ok(order) : ResponseEntity.notFound().build();
-    }
+    private OrderRepository orderRepository;
     
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Order>> getOrdersByUserId(@PathVariable Long userId) {
-        return ResponseEntity.ok(orderService.getOrdersByUserId(userId));
+    public List<Order> getOrdersByUser(@PathVariable Long userId) {
+        System.out.println("[ORDER] Buscando pedidos do usuário: " + userId);
+        List<Order> orders = orderRepository.findByUserIdOrderByCreatedAtDesc(userId);
+        System.out.println("[ORDER] Encontrados " + orders.size() + " pedidos");
+        return orders;
     }
     
-    @PatchMapping("/{id}/status")
-    public ResponseEntity<Order> updateOrderStatus(@PathVariable Long id, @RequestBody Map<String, String> body) {
-        Order updated = orderService.updateOrderStatus(id, body.get("status"));
-        return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
+    @PostMapping
+    public Order createOrder(@RequestBody Order order) {
+        System.out.println("[ORDER] Criando pedido para usuário: " + order.getUserId());
+        Order saved = orderRepository.save(order);
+        System.out.println("[ORDER] Pedido salvo com ID: " + saved.getId());
+        return saved;
+    }
+    
+    @DeleteMapping("/{id}")
+    public void deleteOrder(@PathVariable Long id) {
+        System.out.println("[ORDER] Deletando pedido ID: " + id);
+        orderRepository.deleteById(id);
+        System.out.println("[ORDER] Pedido deletado com sucesso");
     }
 }
